@@ -54,6 +54,11 @@ async function main() {
       page += 1;
     } while (fetched.length > 0);
 
+    if (!files.length) {
+      core.notice("no files to check");
+      return;
+    }
+
     const result = await eipw.lint(files);
     let hasErrors = false;
 

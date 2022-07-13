@@ -9408,6 +9408,10 @@ async function main() {
             }
             page += 1;
         } while (fetched.length > 0);
+        if (!files.length) {
+            _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice("no files to check");
+            return;
+        }
         const result = await eipw_lint_js__WEBPACK_IMPORTED_MODULE_0__.lint(files);
         let hasErrors = false;
         for (let snippet of result) {
