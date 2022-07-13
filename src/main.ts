@@ -78,14 +78,17 @@ async function main() {
       }
 
       let lineNumber = null;
+      let file = null;
 
       if (snippet.slices?.length > 0) {
         lineNumber = snippet.slices[0].line_start;
+        file = snippet.slices[0].source;
       }
 
       const properties = {
         title: snippet.title?.label,
         startLine: lineNumber,
+        file: file,
       };
 
       switch (snippet.title?.annotation_type) {

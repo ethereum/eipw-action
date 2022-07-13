@@ -9429,12 +9429,15 @@ async function main() {
                 }
             }
             let lineNumber = null;
+            let file = null;
             if (((_b = snippet.slices) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 lineNumber = snippet.slices[0].line_start;
+                file = snippet.slices[0].source;
             }
             const properties = {
                 title: (_c = snippet.title) === null || _c === void 0 ? void 0 : _c.label,
                 startLine: lineNumber,
+                file: file,
             };
             switch ((_d = snippet.title) === null || _d === void 0 ? void 0 : _d.annotation_type) {
                 case "Help":
