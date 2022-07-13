@@ -2,11 +2,11 @@
   "name": "eipw-action",
   "version": "0.1.0",
   "description": "A GitHub action to run eipw and display the results.",
-  "main": "lib/main.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "test": "prettier --check src/**/*.ts && exit 1",
-    "build": "tsc",
+    "build": "tsc && ncc build lib/main.js -o dist",
     "format": "prettier --write src/**/*.ts"
   },
   "author": "",
@@ -14,9 +14,11 @@
   "dependencies": {
     "@actions/core": "^1.9.0",
     "@actions/github": "^5.0.3",
-    "eipw-lint-js": "^0.1.1"
+    "@octokit/webhooks-types": "^6.2.2",
+    "eipw-lint-js": "^0.1.2"
   },
   "devDependencies": {
+    "@vercel/ncc": "^0.34.0",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   }

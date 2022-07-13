@@ -1,0 +1,9 @@
+name: 'eipw'
+description: 'Run eipw, the EIP validator, as a GitHub action'
+inputs:
+  token:
+    description: 'GitHub Secret Token'
+    required: true
+runs:
+  using: 'node16'
+  main: 'dist/index.js'

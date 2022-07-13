@@ -7,10 +7,110 @@
 import * as eipw from "eipw-lint-js";
 import core from "@actions/core";
 import github from "@actions/github";
+import { PullRequestEvent } from "@octokit/webhooks-types";
 
 async function main() {
-  const result = await eipw.lint(["/tmp/eip-1000.md"]);
-  console.log(result);
+  try {
+    const githubToken = core.getInput("token");
+    const octokit = github.getOctokit(githubToken);
+    const context = github.context;
+
+    if (context.eventName !== "pull_request") {
+      core.warning(
+        "eipw-action should only be configured to run on pull requests"
+      );
+      return;
+    }
+
+    const pull_event = context.payload as PullRequestEvent;
+    const pull = pull_event.pull_request;
+
+    const files = [];
+
+    let fetched;
+    let page = 1;
+    do {
+      let response = await octokit.rest.pulls.listFiles({
+        owner: pull.base.repo.owner.login,
+        repo: pull.base.repo.name,
+        pull_number: pull.number,
+        page,
+      });
+
+      if (response.status !== 200) {
+        core.setFailed(`pulls listFiles ${response.status}`);
+        return;
+      }
+
+      fetched = response.data;
+
+      for (let entry of fetched) {
+        const filename = entry.filename;
+        if (filename.startsWith("EIPS/")) {
+          files.push(filename);
+        }
+      }
+
+      page += 1;
+    } while (fetched.length > 0);
+
+    const result = await eipw.lint(files);
+    let hasErrors = false;
+
+    for (let snippet of result) {
+      let formatted;
+
+      try {
+        formatted = eipw.format(snippet);
+      } catch {
+        // FIXME: This happens when there's an escape sequence in the JSON.
+        //        serde_json can't deserialize it into an &str, so we display
+        //        what we can.
+        formatted = snippet.title?.label;
+        if (!formatted) {
+          formatted = "<failed to render diagnostic, this is a bug in eipw>";
+        }
+      }
+
+      let lineNumber = null;
+
+      if (snippet.slices?.length > 0) {
+        lineNumber = snippet.slices[0].line_start;
+      }
+
+      const properties = {
+        title: snippet.title?.label,
+        startLine: lineNumber,
+      };
+
+      switch (snippet.title?.annotation_type) {
+        case "Help":
+        case "Note":
+        case "Info":
+          core.notice(formatted, properties);
+          break;
+        case "Warning":
+          core.warning(formatted, properties);
+          break;
+        case "Error":
+        default:
+          core.error(formatted, properties);
+          hasErrors = true;
+          break;
+      }
+    }
+
+    if (hasErrors) {
+      core.setFailed("validation found errors :(");
+    }
+  } catch (error) {
+    console.log(error);
+    let msg = "failed";
+    if (error instanceof Error) {
+      msg = error.message;
+    }
+    core.setFailed(msg);
+  }
 }
 
 main();
