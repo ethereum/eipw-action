@@ -46,7 +46,9 @@ async function main() {
 
       for (let entry of fetched) {
         const filename = entry.filename;
-        if (filename.startsWith("EIPS/")) {
+        const status = entry.status;
+
+        if (filename.startsWith("EIPS/") && status !== "removed") {
           files.push(filename);
         }
       }
