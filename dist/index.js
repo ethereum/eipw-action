@@ -4808,7 +4808,12 @@ module.exports.__wbindgen_json_parse = function(arg0, arg1) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_readFile_4f398bc8582392cd = function() { return handleError(function (arg0, arg1) {
+module.exports.__wbindgen_string_new = function(arg0, arg1) {
+    const ret = getStringFromWasm0(arg0, arg1);
+    return addHeapObject(ret);
+};
+
+module.exports.__wbg_readFile_ed23f76937cdfe79 = function() { return handleError(function (arg0, arg1) {
     const ret = readFile(getObject(arg0), getObject(arg1));
     return addHeapObject(ret);
 }, arguments) };
@@ -4820,11 +4825,6 @@ module.exports.__wbindgen_string_get = function(arg0, arg1) {
     var len0 = WASM_VECTOR_LEN;
     getInt32Memory0()[arg0 / 4 + 1] = len0;
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
-};
-
-module.exports.__wbindgen_string_new = function(arg0, arg1) {
-    const ret = getStringFromWasm0(arg0, arg1);
-    return addHeapObject(ret);
 };
 
 module.exports.__wbg_call_9855a4612eb496cb = function() { return handleError(function (arg0, arg1, arg2) {
@@ -9432,7 +9432,7 @@ async function main() {
             let file = null;
             if (((_b = snippet.slices) === null || _b === void 0 ? void 0 : _b.length) > 0) {
                 lineNumber = snippet.slices[0].line_start;
-                file = snippet.slices[0].source;
+                file = snippet.slices[0].origin;
             }
             const properties = {
                 title: (_c = snippet.title) === null || _c === void 0 ? void 0 : _c.label,
