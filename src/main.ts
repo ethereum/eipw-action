@@ -82,7 +82,7 @@ async function main() {
 
       if (snippet.slices?.length > 0) {
         lineNumber = snippet.slices[0].line_start;
-        file = snippet.slices[0].source;
+        file = snippet.slices[0].origin;
       }
 
       const properties = {
