@@ -9458,6 +9458,14 @@ async function main() {
         }
         if (hasErrors) {
             _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed("validation found errors :(");
+            const url = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `The commit ${pull.head.sha} (as a parent of ${context.sha}) contains errors. Please inspect the [Run Summary](${url}) for details.`;
+            octokit.rest.issues.createComment({
+                owner: pull.base.repo.owner.login,
+                repo: pull.base.repo.name,
+                issue_number: pull.number,
+                body,
+            });
         }
     }
     catch (error) {
