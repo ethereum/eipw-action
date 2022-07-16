@@ -9387,6 +9387,11 @@ async function main() {
                 _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning("eipw-action should only be configured to run on pull requests");
                 return;
         }
+        const uncheckedText = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("unchecked") || "";
+        const unchecked = [];
+        for (let item of uncheckedText.split(",")) {
+            unchecked.push(`eip-${item.trim()}.md`);
+        }
         const pull_event = context.payload;
         const pull = pull_event.pull_request;
         const files = [];
@@ -9407,9 +9412,19 @@ async function main() {
             for (let entry of fetched) {
                 const filename = entry.filename;
                 const status = entry.status;
-                if (filename.startsWith("EIPS/") && status !== "removed") {
-                    files.push(filename);
+                if (status === "removed") {
+                    // Don't consider deleted files.
+                    continue;
                 }
+                if (!filename.startsWith("EIPS/")) {
+                    // Only check files in the `EIPS/` directory.
+                    continue;
+                }
+                if (unchecked.some(i => filename.endsWith(i))) {
+                    // Don't check certain files, as defined in the workflow.
+                    continue;
+                }
+                files.push(filename);
             }
             page += 1;
         } while (fetched.length > 0);
