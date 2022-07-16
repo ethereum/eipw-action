@@ -15,11 +15,15 @@ async function main() {
     const octokit = github.getOctokit(githubToken);
     const context = github.context;
 
-    if (context.eventName !== "pull_request") {
-      core.warning(
-        "eipw-action should only be configured to run on pull requests"
-      );
-      return;
+    switch (context.eventName) {
+      case "pull_request":
+      case "pull_request_target":
+        break;
+      default:
+        core.warning(
+          "eipw-action should only be configured to run on pull requests"
+        );
+        return;
     }
 
     const pull_event = context.payload as PullRequestEvent;
