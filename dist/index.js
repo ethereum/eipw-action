@@ -9379,9 +9379,13 @@ async function main() {
         const githubToken = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("token");
         const octokit = _actions_github__WEBPACK_IMPORTED_MODULE_2__.getOctokit(githubToken);
         const context = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context;
-        if (context.eventName !== "pull_request") {
-            _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning("eipw-action should only be configured to run on pull requests");
-            return;
+        switch (context.eventName) {
+            case "pull_request":
+            case "pull_request_target":
+                break;
+            default:
+                _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning("eipw-action should only be configured to run on pull requests");
+                return;
         }
         const pull_event = context.payload;
         const pull = pull_event.pull_request;
