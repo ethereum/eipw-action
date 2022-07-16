@@ -4,6 +4,10 @@ inputs:
   token:
     description: 'GitHub Secret Token'
     required: true
+  unchecked:
+    description: 'EIP numbers (comma separated) that should not be linted'
+    required: false
+    default: ''
 runs:
   using: 'node16'
   main: 'dist/index.js'
