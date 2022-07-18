@@ -4808,12 +4808,7 @@ module.exports.__wbindgen_json_parse = function(arg0, arg1) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbindgen_string_new = function(arg0, arg1) {
-    const ret = getStringFromWasm0(arg0, arg1);
-    return addHeapObject(ret);
-};
-
-module.exports.__wbg_readFile_ed23f76937cdfe79 = function() { return handleError(function (arg0, arg1) {
+module.exports.__wbg_readFile_a509f440f1c04ec3 = function() { return handleError(function (arg0, arg1) {
     const ret = readFile(getObject(arg0), getObject(arg1));
     return addHeapObject(ret);
 }, arguments) };
@@ -4825,6 +4820,11 @@ module.exports.__wbindgen_string_get = function(arg0, arg1) {
     var len0 = WASM_VECTOR_LEN;
     getInt32Memory0()[arg0 / 4 + 1] = len0;
     getInt32Memory0()[arg0 / 4 + 0] = ptr0;
+};
+
+module.exports.__wbindgen_string_new = function(arg0, arg1) {
+    const ret = getStringFromWasm0(arg0, arg1);
+    return addHeapObject(ret);
 };
 
 module.exports.__wbg_call_9855a4612eb496cb = function() { return handleError(function (arg0, arg1, arg2) {
