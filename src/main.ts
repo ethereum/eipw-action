@@ -7,13 +7,43 @@
 import * as eipw from "eipw-lint-js";
 import core from "@actions/core";
 import github from "@actions/github";
+import { GitHub, getOctokitOptions } from "@actions/github/lib/utils.js";
+import { throttling } from "@octokit/plugin-throttling";
+import { ThrottlingOptions } from "@octokit/plugin-throttling/dist-types/types";
 import { PullRequestEvent } from "@octokit/webhooks-types";
 
 async function main() {
   try {
-    const githubToken = core.getInput("token");
-    const octokit = github.getOctokit(githubToken);
+    const ThrottledOctokit = GitHub.plugin(throttling);
+
     const context = github.context;
+    const githubToken = core.getInput("token");
+    const throttle: ThrottlingOptions = {
+      onRateLimit: (retryAfter, options: any) => {
+        const method = options?.method || "<unknown>";
+        const url = options?.url || "<unknown>";
+
+        octokit.log.warn(
+          `Request quota exhausted for request ${method} ${url}`
+        );
+
+        // Retry twice after hitting a rate limit error, then give up
+        if (options?.request?.retryCount <= 2) {
+          console.log(`Retrying after ${retryAfter} seconds!`);
+          return true;
+        }
+      },
+      onAbuseLimit: (_retryAfter, options: any) => {
+        const method = options?.method || "<unknown>";
+        const url = options?.url || "<unknown>";
+
+        // does not retry, only logs a warning
+        octokit.log.warn(`Abuse detected for request ${method} ${url}`);
+      },
+    };
+    const octokit = new ThrottledOctokit(
+      getOctokitOptions(githubToken, { throttle })
+    );
 
     switch (context.eventName) {
       case "pull_request":
@@ -38,47 +68,33 @@ async function main() {
 
     const files = [];
 
-    let fetched;
-    let page = 1;
-    do {
-      let response = await octokit.rest.pulls.listFiles({
-        owner: pull.base.repo.owner.login,
-        repo: pull.base.repo.name,
-        pull_number: pull.number,
-        page,
-      });
+    const fetched = await octokit.paginate(octokit.rest.pulls.listFiles, {
+      owner: pull.base.repo.owner.login,
+      repo: pull.base.repo.name,
+      pull_number: pull.number,
+    });
 
-      if (response.status !== 200) {
-        core.setFailed(`pulls listFiles ${response.status}`);
-        return;
+    for (let entry of fetched) {
+      const filename = entry.filename;
+      const status = entry.status;
+
+      if (status === "removed") {
+        // Don't consider deleted files.
+        continue;
       }
 
-      fetched = response.data;
-
-      for (let entry of fetched) {
-        const filename = entry.filename;
-        const status = entry.status;
-
-        if (status === "removed") {
-          // Don't consider deleted files.
-          continue;
-        }
-
-        if (!filename.startsWith("EIPS/")) {
-          // Only check files in the `EIPS/` directory.
-          continue;
-        }
-
-        if (unchecked.some(i => filename.endsWith(i))) {
-          // Don't check certain files, as defined in the workflow.
-          continue;
-        }
-
-        files.push(filename);
+      if (!filename.startsWith("EIPS/")) {
+        // Only check files in the `EIPS/` directory.
+        continue;
       }
 
-      page += 1;
-    } while (fetched.length > 0);
+      if (unchecked.some((i) => filename.endsWith(i))) {
+        // Don't check certain files, as defined in the workflow.
+        continue;
+      }
+
+      files.push(filename);
+    }
 
     if (!files.length) {
       core.notice("no files to check");
