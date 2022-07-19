@@ -33,7 +33,7 @@ async function main() {
           return true;
         }
       },
-      onAbuseLimit: (_retryAfter, options: any) => {
+      onSecondaryRateLimit: (_retryAfter, options: any) => {
         const method = options?.method || "<unknown>";
         const url = options?.url || "<unknown>";
 
