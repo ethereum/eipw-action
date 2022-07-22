@@ -6595,7 +6595,7 @@ module.exports.__wbindgen_json_parse = function(arg0, arg1) {
     return addHeapObject(ret);
 };
 
-module.exports.__wbg_readFile_a509f440f1c04ec3 = function() { return handleError(function (arg0, arg1) {
+module.exports.__wbg_readFile_b7e189412d5685c7 = function() { return handleError(function (arg0, arg1) {
     const ret = readFile(getObject(arg0), getObject(arg1));
     return addHeapObject(ret);
 }, arguments) };
