@@ -11232,6 +11232,7 @@ async function main() {
             _actions_core__WEBPACK_IMPORTED_MODULE_1__.notice("no files to check");
             return;
         }
+        const warningOnly = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput("warning-only") == "true";
         const result = await eipw_lint_js__WEBPACK_IMPORTED_MODULE_0__.lint(files);
         let hasErrors = false;
         for (let snippet of result) {
@@ -11270,8 +11271,13 @@ async function main() {
                     break;
                 case "Error":
                 default:
-                    _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(formatted, properties);
-                    hasErrors = true;
+                    if (warningOnly) {
+                        _actions_core__WEBPACK_IMPORTED_MODULE_1__.warning(formatted, properties);
+                    }
+                    else {
+                        _actions_core__WEBPACK_IMPORTED_MODULE_1__.error(formatted, properties);
+                        hasErrors = true;
+                    }
                     break;
             }
         }
