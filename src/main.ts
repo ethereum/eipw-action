@@ -100,6 +100,8 @@ async function main() {
       core.notice("no files to check");
       return;
     }
+    
+    const warningOnly = core.getInput("warning-only") == "true";
 
     const result = await eipw.lint(files);
     let hasErrors = false;
@@ -144,8 +146,12 @@ async function main() {
           break;
         case "Error":
         default:
-          core.error(formatted, properties);
-          hasErrors = true;
+          if (warningOnly) {
+            core.warning(formatted, properties);
+          } else {
+            core.error(formatted, properties);
+            hasErrors = true;
+          }
           break;
       }
     }
