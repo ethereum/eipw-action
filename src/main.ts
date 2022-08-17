@@ -156,7 +156,7 @@ async function main() {
       }
     }
 
-    if (hasErrors && !warningOnly) {
+    if (hasErrors) {
       core.setFailed("validation found errors :(");
     }
   } catch (error) {
