@@ -100,6 +100,8 @@ async function main() {
       core.notice("no files to check");
       return;
     }
+    
+    const warningOnly = core.getInput("warning-only") == "true";
 
     const result = await eipw.lint(files);
     let hasErrors = false;
@@ -144,13 +146,17 @@ async function main() {
           break;
         case "Error":
         default:
-          core.error(formatted, properties);
+          if (warningOnly) {
+            core.warning(formatted, properties);
+          } else {
+            core.error(formatted, properties);
+          }
           hasErrors = true;
           break;
       }
     }
 
-    if (hasErrors) {
+    if (hasErrors && !warningOnly) {
       core.setFailed("validation found errors :(");
     }
   } catch (error) {
