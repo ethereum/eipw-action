@@ -150,8 +150,8 @@ async function main() {
             core.warning(formatted, properties);
           } else {
             core.error(formatted, properties);
+            hasErrors = true;
           }
-          hasErrors = true;
           break;
       }
     }
