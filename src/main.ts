@@ -100,7 +100,7 @@ async function main() {
       core.notice("no files to check");
       return;
     }
-    
+
     const warningOnly = core.getInput("warning-only") == "true";
 
     const result = await eipw.lint(files);
