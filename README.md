@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3.0.2
-      - uses: SamWilsn/eipw-action@master
+      - uses: ethereum/eipw-action@dist
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 ```
