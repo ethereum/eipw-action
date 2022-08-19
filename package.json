@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "build": "esbuild src/main.ts --bundle --platform=node --target=node16 --outfile=dist/index.js && shx cp node_modules/eipw-lint-js/eipw_lint_js_bg.wasm dist && echo { \"type\": \"commonjs\" } > dist/package.json",
-    "test": "prettier --check src/**/*.ts && exit 1",
+    "test": "prettier --check src/**/*.ts",
     "format": "prettier --write src/**/*.ts"
   },
   "author": "",
