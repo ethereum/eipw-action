@@ -102,12 +102,12 @@ async function main() {
     }
 
     const levelConfig = {
-      warn: core.getInput("warn-checks").split(","),
-      info: core.getInput("info-checks").split(","),
-      hide: core.getInput("hide-checks").split(","),
+      deny: core.getInput("deny-checks").split(",").filter(e => e),
+      warn: core.getInput("warn-checks").split(",").filter(e => e),
+      allow: core.getInput("allow-checks").split(",").filter(e => e),
     };
-
-    const result = await eipw.lint(files);
+    
+    const result = await eipw.lint(files, levelConfig);
     let hasWarnings = false;
     let hasErrors = false;
 
@@ -145,35 +145,16 @@ async function main() {
         case "Help":
         case "Note":
         case "Info":
-          if (levelConfig.hide.includes(checkId)) {
-            // NO OP
-          } else {
-            core.notice(formatted, properties);
-          }
+          core.notice(formatted, properties);
           break;
         case "Warning":
-          if (levelConfig.hide.includes(checkId)) {
-            // NO OP
-          } else if (levelConfig.info.includes(checkId)) {
-            core.notice(formatted, properties);
-          } else {
-            core.warning(formatted, properties);
-            hasWarnings = true;
-          }
+          core.warning(formatted, properties);
+          hasWarnings = true;
           break;
         case "Error":
         default:
-          if (levelConfig.hide.includes(checkId)) {
-            // NO OP
-          } else if (levelConfig.info.includes(checkId)) {
-            core.notice(formatted, properties);
-          } else if (levelConfig.warn.includes(checkId)) {
-            core.warning(formatted, properties);
-            hasWarnings = true;
-          } else {
-            core.error(formatted, properties);
-            hasErrors = true;
-          }
+          core.error(formatted, properties);
+          hasErrors = true;
           break;
       }
     }
