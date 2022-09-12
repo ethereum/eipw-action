@@ -160,7 +160,7 @@ async function main() {
     }
 
     if (hasErrors) {
-      core.setFailed("eipw found issues");
+      core.setFailed("validation found errors :(");
     }
   } catch (error) {
     console.log(error);
