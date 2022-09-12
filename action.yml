@@ -8,7 +8,7 @@ inputs:
     description: 'EIP numbers (comma separated) that should not be linted'
     required: false
     default: ''
-  warning-checks:
+  warn-checks:
     description: 'Replace these checks with warnings'
     required: false
     default: ''
