@@ -179,7 +179,7 @@ async function main() {
     }
 
     if (hasErrors) {
-      core.setFailed("EIP Walidator found issues");
+      core.setFailed("eipw found issues");
     }
   } catch (error) {
     console.log(error);
