@@ -101,13 +101,19 @@ async function main() {
       return;
     }
 
-    const warningOnly = core.getInput("warning-only") == "true";
+    const levelConfig = {
+      warn: core.getInput("warn-checks").split(","),
+      info: core.getInput("info-checks").split(","),
+      hide: core.getInput("hide-checks").split(","),
+    };
 
     const result = await eipw.lint(files);
+    let hasWarnings = false;
     let hasErrors = false;
 
     for (let snippet of result) {
       let formatted;
+      let checkId = snippet.title?.id;
 
       try {
         formatted = eipw.format(snippet);
@@ -139,15 +145,31 @@ async function main() {
         case "Help":
         case "Note":
         case "Info":
-          core.notice(formatted, properties);
+          if (levelConfig.hide.includes(checkId)) {
+            // NO OP
+          } else {
+            core.notice(formatted, properties);
+          }
           break;
         case "Warning":
-          core.warning(formatted, properties);
+          if (levelConfig.hide.includes(checkId)) {
+            // NO OP
+          } else if (levelConfig.info.includes(checkId)) {
+            core.notice(formatted, properties);
+          } else {
+            core.warning(formatted, properties);
+            hasWarnings = true;
+          }
           break;
         case "Error":
         default:
-          if (warningOnly) {
+          if (levelConfig.hide.includes(checkId)) {
+            // NO OP
+          } else if (levelConfig.info.includes(checkId)) {
+            core.notice(formatted, properties);
+          } else if (levelConfig.warn.includes(checkId)) {
             core.warning(formatted, properties);
+            hasWarnings = true;
           } else {
             core.error(formatted, properties);
             hasErrors = true;
@@ -157,7 +179,7 @@ async function main() {
     }
 
     if (hasErrors) {
-      core.setFailed("validation found errors :(");
+      core.setFailed("EIP Walidator found issues");
     }
   } catch (error) {
     console.log(error);
