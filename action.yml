@@ -8,15 +8,15 @@ inputs:
     description: 'EIP numbers (comma separated) that should not be linted'
     required: false
     default: ''
+  deny-checks:
+    description: 'Replace these checks with errors'
+    required: false
+    default: ''
   warn-checks:
     description: 'Replace these checks with warnings'
     required: false
     default: ''
-  info-checks:
-    description: 'Replace these checks with info'
-    required: false
-    default: ''
-  hide-checks:
+  allow-checks:
     description: 'Hide these checks'
     required: false
     default: ''
