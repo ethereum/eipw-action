@@ -8,10 +8,18 @@ inputs:
     description: 'EIP numbers (comma separated) that should not be linted'
     required: false
     default: ''
-  warning-only:
-    description: 'Replace all errors with warnings'
+  warning-checks:
+    description: 'Replace these checks with warnings'
     required: false
-    default: 'false'
+    default: ''
+  info-checks:
+    description: 'Replace these checks with info'
+    required: false
+    default: ''
+  hide-checks:
+    description: 'Hide these checks'
+    required: false
+    default: ''
 runs:
   using: 'node16'
   main: 'dist/index.js'
