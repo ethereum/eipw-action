@@ -108,7 +108,6 @@ async function main() {
     };
     
     const result = await eipw.lint(files, levelConfig);
-    let hasWarnings = false;
     let hasErrors = false;
 
     for (let snippet of result) {
@@ -149,7 +148,6 @@ async function main() {
           break;
         case "Warning":
           core.warning(formatted, properties);
-          hasWarnings = true;
           break;
         case "Error":
         default:
