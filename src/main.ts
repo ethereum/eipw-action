@@ -102,11 +102,20 @@ async function main() {
     }
 
     const levelConfig = {
-      deny: core.getInput("deny-checks").split(",").filter(e => e),
-      warn: core.getInput("warn-checks").split(",").filter(e => e),
-      allow: core.getInput("allow-checks").split(",").filter(e => e),
+      deny: core
+        .getInput("deny-checks")
+        .split(",")
+        .filter((e) => e),
+      warn: core
+        .getInput("warn-checks")
+        .split(",")
+        .filter((e) => e),
+      allow: core
+        .getInput("allow-checks")
+        .split(",")
+        .filter((e) => e),
     };
-    
+
     const result = await eipw.lint(files, levelConfig);
     let hasErrors = false;
 
