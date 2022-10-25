@@ -112,7 +112,6 @@ async function main() {
 
     for (let snippet of result) {
       let formatted;
-      let checkId = snippet.title?.id;
 
       try {
         formatted = eipw.format(snippet);
