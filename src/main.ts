@@ -11,6 +11,8 @@ import { GitHub, getOctokitOptions } from "@actions/github/lib/utils.js";
 import { throttling } from "@octokit/plugin-throttling";
 import { ThrottlingOptions } from "@octokit/plugin-throttling/dist-types/types";
 import { PullRequestEvent } from "@octokit/webhooks-types";
+import * as toml from "smol-toml";
+import * as fs from "node:fs/promises";
 
 async function main() {
   try {
@@ -101,7 +103,15 @@ async function main() {
       return;
     }
 
-    const levelConfig = {
+    interface Options {
+      deny?: string[];
+      warn?: string[];
+      allow?: string[];
+      default_lints?: unknown;
+      default_modifiers?: unknown;
+    }
+
+    const levelConfig: Options = {
       deny: core
         .getInput("deny-checks")
         .split(",")
@@ -115,6 +125,32 @@ async function main() {
         .split(",")
         .filter((e) => e),
     };
+
+    const optionsFile = core.getInput("options-file");
+    if (optionsFile) {
+      const optionsText = await fs.readFile(optionsFile, {
+        encoding: "utf8",
+      });
+
+      const optionsToml = toml.parse(optionsText);
+      let changed = false;
+
+      if ("lints" in optionsToml) {
+        levelConfig.default_lints = optionsToml.default_lints;
+        changed = true;
+      }
+
+      if ("modifiers" in optionsToml) {
+        levelConfig.default_modifiers = optionsToml.default_modifiers;
+        changed = true;
+      }
+
+      if (!changed) {
+        throw new Error(
+          "options-file must set at least one of `lints` or `modifiers`"
+        );
+      }
+    }
 
     const result = await eipw.lint(files, levelConfig);
     let hasErrors = false;
