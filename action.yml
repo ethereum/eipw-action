@@ -20,6 +20,10 @@ inputs:
     description: 'Hide these checks'
     required: false
     default: ''
+  options-file:
+    description: 'Path to TOML configuration file'
+    required: false
+    default: ''
 runs:
-  using: 'node16'
+  using: 'node20'
   main: 'dist/index.js'
