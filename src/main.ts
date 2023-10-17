@@ -13,6 +13,18 @@ import { ThrottlingOptions } from "@octokit/plugin-throttling/dist-types/types";
 import { PullRequestEvent } from "@octokit/webhooks-types";
 import * as toml from "smol-toml";
 import * as fs from "node:fs/promises";
+import * as path from "node:path";
+
+function path2number(input: string): number {
+  const name = path.parse(input).name;
+  const start = name.indexOf("-") + 1;
+  const rest = name.slice(start);
+  const num = Number(rest);
+  if (Number.isNaN(num)) {
+    throw new Error(`file name "${name}" not in correct format`);
+  }
+  return num;
+}
 
 async function main() {
   try {
@@ -63,7 +75,7 @@ async function main() {
     const unchecked = [];
 
     for (let item of uncheckedText.split(",")) {
-      unchecked.push(`eip-${item.trim()}.md`);
+      unchecked.push(Number(item.trim()));
     }
 
     const pull_event = context.payload as PullRequestEvent;
@@ -91,7 +103,9 @@ async function main() {
         continue;
       }
 
-      if (unchecked.some((i) => filename.endsWith(i))) {
+      const number = path2number(filename);
+
+      if (unchecked.some((i) => number === i)) {
         // Don't check certain files, as defined in the workflow.
         continue;
       }
