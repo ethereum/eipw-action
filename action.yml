@@ -4,6 +4,10 @@ inputs:
   token:
     description: 'GitHub Secret Token'
     required: true
+  path:
+    description: 'Path prefix to watch for changed files'
+    required: false
+    default: 'EIPS/'
   unchecked:
     description: 'EIP numbers (comma separated) that should not be linted'
     required: false

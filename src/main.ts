@@ -20,6 +20,7 @@ async function main() {
 
     const context = github.context;
     const githubToken = core.getInput("token");
+    const pathPrefix = core.getInput("path") || "EIPS/";
     const throttle: ThrottlingOptions = {
       onRateLimit: (retryAfter, options: any) => {
         const method = options?.method || "<unknown>";
@@ -85,7 +86,7 @@ async function main() {
         continue;
       }
 
-      if (!filename.startsWith("EIPS/")) {
+      if (!filename.startsWith(pathPrefix)) {
         // Only check files in the `EIPS/` directory.
         continue;
       }
