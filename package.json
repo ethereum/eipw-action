@@ -18,7 +18,7 @@
     "@octokit/plugin-throttling": "^5.0.1",
     "@octokit/webhooks-types": "^6.10.0",
     "@types/node": "^20.5.2",
-    "eipw-lint-js": "^0.6.0",
+    "eipw-lint-js": "^0.7.0",
     "smol-toml": "^1.1.2",
     "tr46": "^4.1.0"
   },
