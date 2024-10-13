@@ -39,7 +39,7 @@ async function main() {
         const url = options?.url || "<unknown>";
 
         octokit.log.warn(
-          `Request quota exhausted for request ${method} ${url}`
+          `Request quota exhausted for request ${method} ${url}`,
         );
 
         // Retry twice after hitting a rate limit error, then give up
@@ -57,7 +57,7 @@ async function main() {
       },
     };
     const octokit = new ThrottledOctokit(
-      getOctokitOptions(githubToken, { throttle })
+      getOctokitOptions(githubToken, { throttle }),
     );
 
     switch (context.eventName) {
@@ -66,7 +66,7 @@ async function main() {
         break;
       default:
         core.warning(
-          "eipw-action should only be configured to run on pull requests"
+          "eipw-action should only be configured to run on pull requests",
         );
         return;
     }
@@ -162,7 +162,7 @@ async function main() {
 
       if (!changed) {
         throw new Error(
-          "options-file must set at least one of `lints` or `modifiers`"
+          "options-file must set at least one of `lints` or `modifiers`",
         );
       }
     }
@@ -179,7 +179,7 @@ async function main() {
         // FIXME: This happens when there's an escape sequence in the JSON.
         //        serde_json can't deserialize it into an &str, so we display
         //        what we can.
-        formatted = snippet.title?.label;
+        formatted = snippet.title;
         if (!formatted) {
           formatted = "<failed to render diagnostic, this is a bug in eipw>";
         }
@@ -188,18 +188,18 @@ async function main() {
       let lineNumber = null;
       let file = null;
 
-      if (snippet.slices?.length > 0) {
-        lineNumber = snippet.slices[0].line_start;
-        file = snippet.slices[0].origin;
+      if (snippet.snippets?.length > 0) {
+        lineNumber = snippet.snippets[0].line_start;
+        file = snippet.snippets[0].origin;
       }
 
       const properties = {
-        title: snippet.title?.label,
+        title: snippet.title,
         startLine: lineNumber,
         file: file,
       };
 
-      switch (snippet.title?.annotation_type) {
+      switch (snippet.level) {
         case "Help":
         case "Note":
         case "Info":
