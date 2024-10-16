@@ -8,6 +8,10 @@ inputs:
     description: 'Path prefix to watch for changed files'
     required: false
     default: 'EIPS/'
+  working-directory:
+    description: 'Path where the repository is checked out'
+    required: false
+    default: ''
   unchecked:
     description: 'EIP numbers (comma separated) that should not be linted'
     required: false

@@ -32,6 +32,7 @@ async function main() {
 
     const context = github.context;
     const githubToken = core.getInput("token");
+    const workingDirectory = core.getInput("working-directory") || "";
     const pathPrefix = core.getInput("path") || "EIPS/";
     const throttle: ThrottlingOptions = {
       onRateLimit: (retryAfter, options: any) => {
@@ -110,7 +111,7 @@ async function main() {
         continue;
       }
 
-      files.push(filename);
+      files.push(path.join(workingDirectory, filename));
     }
 
     if (!files.length) {
