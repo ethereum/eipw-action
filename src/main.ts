@@ -14,11 +14,25 @@ import { PullRequestEvent } from "@octokit/webhooks-types";
 import * as toml from "smol-toml";
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
+import { minimatch } from "minimatch";
 
 function path2number(input: string): number {
-  const name = path.parse(input).name;
-  const start = name.indexOf("-") + 1;
-  const rest = name.slice(start);
+  const parsed = path.parse(input);
+  const name = parsed.name;
+  const dash = name.indexOf("-");
+
+  let rest;
+  if (dash >= 0) {
+    // Legacy EIP file names, like `eip-1234.md`
+    rest = name.slice(dash + 1);
+  } else if (parsed.base === "index.md") {
+    // Modern EIP file names, like `01234/index.md`.
+    rest = path.parse(parsed.dir).base;
+  } else {
+    // Modern EIP file names, like `01234.md`.
+    rest = parsed.name;
+  }
+
   const num = Number(rest);
   if (Number.isNaN(num)) {
     throw new Error(`file name "${name}" not in correct format`);
@@ -33,7 +47,8 @@ async function main() {
     const context = github.context;
     const githubToken = core.getInput("token");
     const workingDirectory = core.getInput("working-directory") || "";
-    const pathPrefix = core.getInput("path") || "EIPS/";
+    const includeText = core.getInput("include") || "EIPS/**";
+    const include = includeText.split("\n");
     const throttle: ThrottlingOptions = {
       onRateLimit: (retryAfter, options: any) => {
         const method = options?.method || "<unknown>";
@@ -99,8 +114,16 @@ async function main() {
         continue;
       }
 
-      if (!filename.startsWith(pathPrefix)) {
-        // Only check files in the `EIPS/` directory.
+      // Only check files that match the include patterns.
+      let matched = false;
+      for (const pattern of include) {
+        if (minimatch(filename, pattern)) {
+          matched = true;
+          break;
+        }
+      }
+
+      if (!matched) {
         continue;
       }
 
