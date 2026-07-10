@@ -5,11 +5,11 @@
  */
 
 import * as eipw from "eipw-lint-js";
-import core from "@actions/core";
-import github from "@actions/github";
-import { GitHub, getOctokitOptions } from "@actions/github/lib/utils.js";
+import * as core from "@actions/core";
+import * as github from "@actions/github";
+import { GitHub, getOctokitOptions } from "@actions/github/lib/utils";
 import { throttling } from "@octokit/plugin-throttling";
-import { ThrottlingOptions } from "@octokit/plugin-throttling/dist-types/types";
+import { ThrottlingOptions } from "@octokit/plugin-throttling";
 import { PullRequestEvent } from "@octokit/webhooks-types";
 import * as toml from "smol-toml";
 import * as fs from "node:fs/promises";

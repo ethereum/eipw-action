@@ -1,12 +1,12 @@
 {
   "compilerOptions": {
     "target": "es2022",
-    "module": "es6",
+    "module": "Node16",
     "outDir": "./lib",
     "rootDir": "./src",
     "strict": true,
     "alwaysStrict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "node16",
     "esModuleInterop": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true
